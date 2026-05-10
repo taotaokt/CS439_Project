@@ -62,33 +62,39 @@ The dataset contains approximately 300 patient records and a mix of continuous a
 
 ## Project Workflow  
 
-### 1. Data Cleaning and Preprocessing  
+### 1. Data Inspection and Preprocessing  
 
-- Checked for missing values and data inconsistencies  
-- Verified binary variables (e.g., diabetes, smoking) were correctly encoded  
-- Applied feature scaling for models that require it (e.g., Logistic Regression, SVM)  
-- Performed train-test split with stratification to preserve class distribution  
+- Inspected the dataset using summary statistics and structure checks  
+- Verified that the variables were suitable for machine learning analysis  
+- Applied feature scaling for models that require it, such as Logistic Regression and SVM  
+- Performed train-test split for model development and evaluation  
 
 ### 2. Exploratory Data Analysis (EDA)  
 
 - Examined distributions of key clinical variables  
 - Compared feature values between survival and death groups  
-- Visualized relationships using correlation heatmaps  
+- Visualized relationships using correlation heatmaps, pairplots, and group comparisons  
 - Identified potential patterns such as higher mortality in certain clinical ranges  
 
 ### 3. Feature Engineering  
 
-- Removed redundant or highly correlated features where necessary  
-- Prepared data for different models (scaled vs non-scaled versions)  
+- Applied log transformation to skewed variables such as serum creatinine and creatinine phosphokinase  
+- Created age-group features to capture age-related risk patterns  
+- Added interaction terms such as age × serum creatinine and ejection fraction × serum creatinine  
+- Compared baseline and engineered Logistic Regression models to examine the effect of new features  
 
 ### 4. Model Development  
 
 We implemented and compared multiple models:
 
-- Logistic Regression (baseline model)  
+- Logistic Regression  
+- Logistic Regression with PCA  
+- Decision Tree (baseline exploration)  
 - Support Vector Machine (SVM)  
+- Support Vector Machine with PCA  
 - Random Forest  
 - Tuned Random Forest (using GridSearchCV for hyperparameter tuning)  
+- XGBoost  
 
 ### 5. Model Evaluation  
 
@@ -96,9 +102,11 @@ We evaluated models using:
 
 - Accuracy  
 - Precision  
-- Recall (especially important for detecting high-risk patients)  
+- Recall, especially for the death class  
 - F1-score  
 - ROC-AUC  
+- Confusion Matrix  
+- ROC Curve  
 
 In this process, we focus on improving the recall rate to reduce the risk of missing high-risk patients.
 
@@ -106,31 +114,37 @@ In this process, we focus on improving the recall rate to reduce the risk of mis
 
 - Compared model performance and trade-offs  
 - Examined which model best identifies high-risk patients  
+- Interpreted Logistic Regression coefficients for engineered features  
 - Interpreted results in a clinical context  
 
 
 ## Final Results  
 
-We evaluated four models: Logistic Regression, SVM, Random Forest, and Tuned Random Forest.
+We evaluated Logistic Regression, Logistic Regression with PCA, SVM, SVM with PCA, Random Forest, XGBoost, and Tuned Random Forest.
 
 | Model | Accuracy | Death Recall | ROC-AUC |
 |------|---------|-------------|---------|
-| Logistic Regression | 0.80 | 0.579 | 0.855 |
-| SVM | 0.72 | 0.526 | 0.856 |
-| Random Forest | 0.85 | 0.632 | 0.910 |
-| Tuned Random Forest | 0.83 | 0.684 | 0.899 |
+| Logistic Regression | 0.800 | 0.579 | 0.855 |
+| Logistic Regression + PCA | 0.783 | 0.737 | 0.861 |
+| SVM | 0.717 | 0.526 | 0.856 |
+| SVM + PCA | 0.767 | 0.579 | 0.791 |
+| Random Forest | 0.850 | 0.632 | 0.910 |
+| XGBoost | 0.850 | 0.632 | 0.850 |
+| Tuned Random Forest | 0.833 | 0.684 | 0.899 |
 
-Among these models, the Tuned Random Forest achieved the highest Death Recall (0.684), which is the most important metric for this task.
+Among all evaluated models, **Logistic Regression with PCA** achieved the highest Death Recall (0.737), which is an important metric for identifying high-risk patients.
 
-Although the standard Random Forest achieved the highest ROC-AUC (0.910), the Tuned Random Forest provides a better balance between Recall and overall performance.
+At the same time, **Random Forest** achieved the highest ROC-AUC (0.910), showing the strongest overall separability between classes.
+
+The **Tuned Random Forest** remained a strong model with high recall and strong overall performance, making it a competitive option when balancing multiple metrics.
 
 
 ## Conclusion
-In this project, we constructed and compared various machine learning models with the aim of utilizing clinical data to predict the likelihood of mortality among heart failure patients during the follow-up period.
+In this project, we constructed and compared multiple machine learning models to predict mortality risk among heart failure patients using clinical indicators.
 
-Among all the models evaluated, the tuned Random Forest model demonstrated the best performance, proving most effective at identifying patients at high risk of mortality.
+The results show that different models offer different strengths. Logistic Regression with PCA achieved the highest death recall, while Random Forest achieved the highest ROC-AUC. Tuned Random Forest also delivered strong and balanced performance across evaluation metrics.
 
-Overall, our results demonstrate that machine learning can serve as an effective tool to assist clinicians in identifying high-risk patients at an earlier stage, thereby supporting the formulation of more optimized treatment decisions.
+Overall, our findings suggest that machine learning can be a useful tool for early mortality risk assessment, and that the best model choice may depend on whether the main priority is recall or overall classification performance.
 
 
 ## Limitations  
@@ -146,6 +160,9 @@ Overall, our results demonstrate that machine learning can serve as an effective
 - Pandas  
 - NumPy  
 - Scikit-learn  
+- Matplotlib  
+- Seaborn  
+- XGBoost  
 
 Version control and collaboration are managed through GitHub.
 
@@ -158,13 +175,13 @@ Version control and collaboration are managed through GitHub.
   Exploratory Data Analysis (data overview, distributions, correlations)  
 
 - `feature_engingeering.ipynb`  
-  Data preprocessing and feature preparation  
+  Feature engineering experiments and coefficient-based interpretation  
 
 - `modeling.ipynb`  
-  Training machine learning models  
+  Baseline model development using Logistic Regression, Decision Tree, and Random Forest  
 
 - `model_comparison.ipynb`  
-  Model evaluation, tuning, and comparison  
+  Systematic model comparison, PCA-based experiments, tuning, and final evaluation  
 
 - `README.md`  
   Project documentation  
